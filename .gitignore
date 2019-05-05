@@ -2,3 +2,4 @@ datasets/
 .ipynb_checkpoints/
 images/
 *.pkl
+.DS_Store
