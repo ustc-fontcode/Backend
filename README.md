@@ -1,4 +1,4 @@
-# Chinese Font-Code
+# Chinese Font-Code Backend
 ## introduction
 a project for creating encoder and decoder based on Chinese font
 
