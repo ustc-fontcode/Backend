@@ -4,3 +4,6 @@ images/
 *.pkl
 .DS_Store
 sshd/
+.vscode
+__pycache__
+Pipfile

@@ -1,8 +1,8 @@
-import config
+from wordcut import config
 import pytesseract
 from PIL import Image, ImageDraw
-from Character import ChineseCharacter
-import pretreat
+from wordcut.Character import ChineseCharacter
+import wordcut.pretreat
 
 
 def cut_word_with_tesseract(img: Image.Image, font: str) -> list:
@@ -60,7 +60,7 @@ def cut_word_with_size_and_border(image: Image.Image, font: str, count: int) -> 
             # tmp.show()
             # tmp.save()
             count += 1
-            tmp.save("cuttest/{}/{}.png".format(font, count))
+            tmp.save("output/{}/{}.png".format(font, count))
             ret.append(tmp)
     return ret
 
@@ -68,8 +68,9 @@ def cut_word_with_size_and_border(image: Image.Image, font: str, count: int) -> 
 if __name__ == "__main__":
     img = Image.open("1.jpg").convert("RGB")
     # img = pretreat(img)
-    img = pretreat.crop_image(img)
-    img.show()
-    img_list = cut_word_with_size_and_border(img, config.FONT_NAME_HuaWen)
-    print(pytesseract.image_to_string(img_list[0], lang="chi_sim", config="-psm 10"))
-    print(pytesseract.image_to_string(img, lang="chi_sim"))
+    img = img.resize(config.IMAGE_SIZE)
+    # img.show()
+    # img = pretreat.crop_image(img)
+    img_list = cut_word_with_size_and_border(img, config.FONT_NAME_HuaWen, 1)
+    # print(pytesseract.image_to_string(img_list[0], lang="chi_sim", config="-psm 10"))
+    # print(pytesseract.image_to_string(img, lang="chi_sim"))

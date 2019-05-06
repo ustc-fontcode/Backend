@@ -6,6 +6,9 @@ a project for creating encoder and decoder based on Chinese font
 - pytorch
 - pillow
 - flask
+- opencv-python
+- pytesseract
+- tesseract
 
 ## quick start
 ```bash

@@ -1,4 +1,4 @@
-import config
+import wordcut.config
 import numpy as np
 from PIL import Image
 import cv2
@@ -139,6 +139,6 @@ def crop_image(image):
 
 
 if __name__ == "__main__":
-    img = Image.open("data/1.jpg")
+    img = Image.open("1.jpg")
     img = crop_image(img)
     img.show()

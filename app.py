@@ -7,6 +7,7 @@ import numpy as np
 from PIL import Image 
 from torchvision import transforms, models, datasets
 
+
 # TODO: transform from PIL.IMAGE to Tensor with normalization
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
@@ -84,8 +85,8 @@ def predict():
 
 if __name__ == '__main__':
     # restore entire net
-    net = torch.load('net1.0.pkl')
-    net.eval()
+    # net = torch.load('net1.0.pkl')
+    # net.eval()
     app.run(host='0.0.0.0', debug=True)
 
    
