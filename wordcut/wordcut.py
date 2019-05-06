@@ -42,7 +42,7 @@ def cut_word_with_size(img: Image.Image, font: str) -> list:
     return img_char_list
 
 
-def cut_word_with_size_and_border(image: Image.Image, font: str) -> list:
+def cut_word_with_size_and_border(image: Image.Image, font: str, count: int) -> list:
     ret = []
     for row in range(1, config.DOC_DIM[1]-1):
         for col in range(1, config.DOC_DIM[0]-1):
@@ -59,9 +59,8 @@ def cut_word_with_size_and_border(image: Image.Image, font: str) -> list:
             '''
             # tmp.show()
             # tmp.save()
-
-            cut_word_with_size_and_border.count += 1
-            tmp.save("cuttest/{}/{}.png".format(font, cut_word_with_size_and_border.count))
+            count += 1
+            tmp.save("cuttest/{}/{}.png".format(font, count))
             ret.append(tmp)
     return ret
 
