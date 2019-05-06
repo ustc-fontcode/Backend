@@ -61,16 +61,16 @@ def cut_word_with_size_and_border(image: Image.Image, font: str) -> list:
             # tmp.save()
 
             cut_word_with_size_and_border.count += 1
-            tmp.save("result/{}/{}.png".format(font, cut_word_with_size_and_border.count))
+            tmp.save("cuttest/{}/{}.png".format(font, cut_word_with_size_and_border.count))
             ret.append(tmp)
     return ret
 
 
 if __name__ == "__main__":
-    img = Image.open("data/1.jpg").convert("RGB")
+    img = Image.open("1.jpg").convert("RGB")
     # img = pretreat(img)
     img = pretreat.crop_image(img)
     img.show()
-    img_list = cut_word_with_size_and_border(img, config.FONT_NAME_Sun)
+    img_list = cut_word_with_size_and_border(img, config.FONT_NAME_HuaWen)
     print(pytesseract.image_to_string(img_list[0], lang="chi_sim", config="-psm 10"))
     print(pytesseract.image_to_string(img, lang="chi_sim"))
