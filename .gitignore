@@ -7,3 +7,6 @@ sshd/
 .vscode
 __pycache__
 Pipfile
+input/
+output/
+cuttest/
