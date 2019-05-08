@@ -85,8 +85,8 @@ def predict():
 
 if __name__ == '__main__':
     # restore entire net
-    # net = torch.load('net1.0.pkl')
-    # net.eval()
+    net = torch.load('net1.0.pkl')
+    net.eval()
     app.run(host='0.0.0.0', debug=True)
 
    

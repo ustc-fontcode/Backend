@@ -48,36 +48,41 @@ optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
 loss_func = torch.nn.CrossEntropyLoss()
 
-# train model
-running_loss = 0
-for epoch in range(EPOCH):
-    scheduler.step()
-    model.train(True)
-    for step, (features, target) in enumerate(train_loader):
-        # print(step)
-        # print(input[0])
-        # target = torch.zeros(BATCH_SIZE, CLASS_NUM)
-        # target = target.scatter_(1, target.long(), 1).long()
-        features = features.to(device)
-        target = target.to(device)
-        optimizer.zero_grad()
-        output = model(features)
-        loss = loss_func(output, target)
-        loss.backward()
-        optimizer.step() 
+# train model function
+def train_model(loader):
+    running_loss = 0
+    for epoch in range(EPOCH):
+        scheduler.step()
+        model.train(True)
+        for step, (features, target) in enumerate(loader):
+            # print(step)
+            # print(input[0])
+            # target = torch.zeros(BATCH_SIZE, CLASS_NUM)
+            # target = target.scatter_(1, target.long(), 1).long()
+            features = features.to(device)
+            target = target.to(device)
+            optimizer.zero_grad()
+            output = model(features)
+            loss = loss_func(output, target)
+            loss.backward()
+            optimizer.step() 
         
         
-        running_loss += loss.item()
-        if step % 200 == 199:    # print every 200 mini-batches
-            print('[%d, %5d] loss: %.3f' %
-                  (epoch + 1, step + 1, running_loss / 200))
-            running_loss = 0.0
-       
-print('finished')
-torch.save(model, 'net1.0.pkl')  # 保存整个网络
+            running_loss += loss.item()
+            if step % 200 == 199:    # print every 200 mini-batches
+                print('[%d, %5d] loss: %.3f' %
+                    (epoch + 1, step + 1, running_loss / 200))
+                running_loss = 0.0
+
+# use train_dataset to train
+train_model(train_loader)
+
+print('train finished')
+torch.save(model, 'net1.0.pkl')  # save model
 # val model
 
 
+# start measure accuracy
 model.eval()
 classes = ['HuaWenSun', 'MicroSun']
 class_correct = list(0. for i in range(2))
@@ -101,3 +106,9 @@ with torch.no_grad():
 for i in range(2):
     print('Accuracy of %5s : %2d %%' % (
         classes[i], 100 * class_correct[i] / class_total[i]))
+
+print('measure finished')
+
+# use last test_loader to train
+train_model(test_loader)
+print('all finished')
