@@ -84,8 +84,8 @@ def predict():
         return show_upload_form()
 
 if __name__ == '__main__':
-    # restore entire net
-    net = torch.load('net1.0.pkl')
+    #restore entire net
+    net = torch.load('net1.0.pkl', map_location=lambda storage, loc: storage)
     net.eval()
     app.run(host='0.0.0.0', debug=True)
 
