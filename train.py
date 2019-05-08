@@ -7,8 +7,8 @@ import numpy as np
 from PIL import Image 
 from torchvision import transforms, models, datasets
 
-EPOCH = 2
-BATCH_SIZE = 3
+EPOCH = 10
+BATCH_SIZE = 8
 CLASS_NUM = 2
 NET_WORKERS = 3
 
@@ -97,7 +97,7 @@ with torch.no_grad():
         c = (predicted == labels).squeeze()
         if c.dim() < 1:
             break
-        for i in range(3):
+        for i in range(2):
             label = labels[i]
             class_correct[label] += c[i].item()
             class_total[label] += 1

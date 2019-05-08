@@ -3,7 +3,7 @@ import pytesseract
 from PIL import Image, ImageDraw
 from wordcut.Character import ChineseCharacter
 import wordcut.pretreat
-
+import os
 
 def cut_word_with_tesseract(img: Image.Image, font: str) -> list:
     # img = img.resize((1000, 1000))
@@ -64,6 +64,33 @@ def cut_word_with_size_and_border(output_dir:str, image: Image.Image, font: str,
             ret.append(tmp)
     return ret
 
+def cutInputImages(input_path, output_path):
+    
+    # clean output dir when start cutting
+    os.system('rm -rf ' + output_path + '*')
+    input_images = os.listdir(input_path)
+    input_cnt = 0
+
+    for image_name in input_images:
+        img = Image.open(input_path + image_name).convert("RGB")
+        img = img.resize(config.IMAGE_SIZE)
+        output_folder = str(input_cnt)
+        os.makedirs(output_path + output_folder)
+        img_list = cut_word_with_size_and_border(output_path, img, output_folder, 0)
+        input_cnt += 1
+    print(input_images)
+    return len(img_list)
+
+def binaryzation(image: Image.Image, threshold: int):
+    Gray = image.convert('L')
+    table  =  []
+    for i in range(256):
+        if  i  <  threshold:
+            table.append(0)
+        else :
+            table.append(1)
+    bim = Gray.point(table, '1')
+    return bim
 
 if __name__ == "__main__":
     img = Image.open("1.jpg").convert("RGB")
