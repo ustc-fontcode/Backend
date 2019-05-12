@@ -79,6 +79,8 @@ def main():
             rslt = decode(font_num, decode_path)
             cal_accu(rslt, code[i])
 
+            
+
 if __name__ == "__main__":
     net = torch.load('net1.0.pkl', map_location='cpu')
     net.eval()

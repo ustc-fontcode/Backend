@@ -78,6 +78,7 @@ def train_model(loader):
 train_model(train_loader)
 
 print('train finished')
+torch.save(model, 'net1.0.pkl')  # save model
 # val model
 
 
@@ -88,27 +89,26 @@ class_correct = list(0. for i in range(2))
 class_total = list(0. for i in range(2))
 with torch.no_grad():
     for data in test_loader:
-            break
-        for i in range(2):
-            label = labels[i]
-            class_correct[label]
         images, labels = data
         images = images.to(device)
         labels = labels.to(device)
         outputs = model(images)
         _, predicted = torch.max(outputs, 1)
         c = (predicted == labels).squeeze()
-        if c.dim() < 1: += c[i].item()
+        if c.dim() < 1:
+            break
+        for i in range(2):
+            label = labels[i]
+            class_correct[label] += c[i].item()
             class_total[label] += 1
 
 
 for i in range(2):
-    print('Accuracy of %5s : %2f %%' % (
+    print('Accuracy of %5s : %2d %%' % (
         classes[i], 100 * class_correct[i] / class_total[i]))
 
 print('measure finished')
 
 # use last test_loader to train
 train_model(test_loader)
-torch.save(model, 'net1.0.pkl')  # save model
 print('all finished')
