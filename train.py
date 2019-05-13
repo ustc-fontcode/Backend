@@ -14,17 +14,18 @@ NET_WORKERS = 3
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(device)
-normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                     std=[0.229, 0.224, 0.225])
+normalize = transforms.Normalize(mean=[0.5],
+                                     std=[0.5])
 
 transform = transforms.Compose([
+    transforms.Grayscale(num_output_channels=1),
     transforms.Resize(224),
     transforms.ToTensor(),
     normalize
 ])
 
 # get data set
-full_dataset = datasets.ImageFolder(root='./results', transform = transform)
+full_dataset = datasets.ImageFolder(root='../results', transform = transform)
 print(full_dataset.class_to_idx)
 
 
@@ -40,6 +41,8 @@ test_loader = data.DataLoader(dataset= test_dataset, batch_size=BATCH_SIZE,shuff
 # get model
 model = models.resnet18(pretrained = True)
 resnet_features = model.fc.in_features
+model.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3,
+                               bias=False)
 model.fc = nn.Linear(resnet_features, CLASS_NUM)
 model = model.to(device)
 
