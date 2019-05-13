@@ -14,11 +14,10 @@ NET_WORKERS = 3
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(device)
-normalize = transforms.Normalize(mean=[0.5],
-                                     std=[0.5])
+normalize = transforms.Normalize(mean=[0.5, 0.5, 0.5],
+                                     std=[0.5, 0.5, 0.5])
 
 transform = transforms.Compose([
-    transforms.Grayscale(num_output_channels=1),
     transforms.Resize(224),
     transforms.ToTensor(),
     normalize
@@ -41,8 +40,6 @@ test_loader = data.DataLoader(dataset= test_dataset, batch_size=BATCH_SIZE,shuff
 # get model
 model = models.resnet18(pretrained = True)
 resnet_features = model.fc.in_features
-model.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3,
-                               bias=False)
 model.fc = nn.Linear(resnet_features, CLASS_NUM)
 model = model.to(device)
 
@@ -81,7 +78,7 @@ def train_model(loader):
 train_model(train_loader)
 
 print('train finished')
-torch.save(model, 'net1.0.pkl')  # save model
+
 # val model
 
 

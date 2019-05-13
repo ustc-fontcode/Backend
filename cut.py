@@ -53,7 +53,7 @@ def cutTrainImages(input_path, output_path, fonts_num, fonts_name, cnt = 0):
 
 if __name__ == "__main__":
     input_path = ["../thresh"]
-    output_path = "../results/"
+    output_path = "../results"
     os.system("rm -rf {}/*".format(output_path))
     cnt = 0
     for i in input_path:
