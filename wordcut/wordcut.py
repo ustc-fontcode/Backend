@@ -1,5 +1,4 @@
 from wordcut import config
-import pytesseract
 from PIL import Image, ImageDraw
 import os
 
