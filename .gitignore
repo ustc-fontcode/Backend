@@ -10,3 +10,6 @@ Pipfile
 input/
 output/
 cuttest/
+thresh/
+photo/
+error_test/
