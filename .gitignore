@@ -1,0 +1,16 @@
+datasets/
+.ipynb_checkpoints/
+images/
+*.pkl
+.DS_Store
+sshd/
+.vscode/
+__pycache__/
+Pipfile
+input/
+output/
+cuttest/
+thresh/
+photo/
+error_test/
+results/
