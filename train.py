@@ -6,6 +6,7 @@ from torch.utils import data
 import numpy as np
 from PIL import Image 
 from torchvision import transforms, models, datasets
+import sys
 
 EPOCH = 10
 BATCH_SIZE = 8
@@ -39,6 +40,9 @@ test_loader = data.DataLoader(dataset= test_dataset, batch_size=BATCH_SIZE,shuff
 
 # get model
 model = models.resnet18(pretrained = True)
+print(model)
+
+
 resnet_features = model.fc.in_features
 model.fc = nn.Linear(resnet_features, CLASS_NUM)
 model = model.to(device)
