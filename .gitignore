@@ -14,3 +14,4 @@ thresh/
 photo/
 error_test/
 results/
+*.ipynb
