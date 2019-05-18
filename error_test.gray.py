@@ -7,42 +7,43 @@ from torch.utils import data
 import numpy as np
 from PIL import Image 
 from torchvision import transforms, models, datasets
-import argparse
 
-parser = argparse.ArgumentParser()
+code1 = '01001011000001010100011000110000000000100101011101101000101111110011001110000001011100011110100101010111010111011010011010111101011101011000'
+code2 = '11110101111110100110100011100010110110101000010100110000011001100111101010100111101010000111101111101001111011101001111001111111000110010010'
+code3 = '011011000000111111111000111001111100010010001111100110111011101010011000011001111100010111101111011110010001101010100000001101110000001001101001001110000101011010001001111011000010001010011100'
 
-parser.add_argument('test_dir', action="store", help='test dir that contains pretreat test pictures')
-parser.add_argument('cut_result_dir', action="store", help='cut result dir that used to contained cutted test pictures')
+code4 = '11001110110101110100010110011000100010001101110110010010110101100110010101011111111101000010100011011000101000101101010101111101110100010001'
+code5 = '100010001011010101001100100100000011011010110110101011100101111100100001100000001011111101110101100010111011101111000100010100110001010101001101'
 
-
-code1 = '100001000111101000110000100111100010111011001000001011000111010100101010110111110100010100110101011001100101100111100101011011100110000110001000'
-code2 = '111110001001011001011101100001001101100101100010100011011100100010011000011100010010011011110110110000000010100010001010000000000110100100111111'
-code3 = '110101111000111100010000110111110111100111010111100100010001011100010000010111101111001001100101000100101001001111110111111110001011110111110101'
-
-
+test_dir = "./datasets/test_gray/"
 test1 = "test1"
 test2 = "test2"
 test3 = "test3"
 
 code = [code1, code2, code3]
-test = [test1, test2, test3]
+# test = [test1, test2, test3]
+test = [test1]
 
+cut_result_dir = "./datasets/error_results"
+os.system('rm -rf ' + cut_result_dir)
+os.mkdir(cut_result_dir)
 
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-normalize = transforms.Normalize(mean=[0.5, 0.5, 0.5],
-                                     std=[0.5, 0.5, 0.5])
-
-trans = transforms.Compose([
-    transforms.Resize(224),
-    transforms.ToTensor(),
-    normalize
-])
 
 def do_predict(word):
     outputs = net(word)
     _, predicted = torch.max(outputs, 1)
     return predicted
 
+
+normalize = transforms.Normalize(mean=[0.5],
+                                     std=[0.5])
+
+trans = transforms.Compose([
+    transforms.Resize(224),
+    transforms.Grayscale(),
+    transforms.ToTensor(),
+    normalize
+])
 
 def decode(word_cnt, decode_path):
     decode_str = ''
@@ -51,7 +52,7 @@ def decode(word_cnt, decode_path):
             path = decode_path + '/' +str(cnt)+'.png'
             print(path)
             word = trans(Image.open(path))
-            word = torch.stack((word, word, word), 0).to(device)
+            word = torch.stack((word, word, word), 0)
             predict = do_predict(word)
             decode_str += str(np.array(predict)[0])    
     print(decode_str)
@@ -67,9 +68,9 @@ def cal_accu(decode_str, answer_str):
     return bit_success_rate
 
 # cut imgages
-def cut_images(test_dir, cut_result_dir):
+def cut_images():
     for i in range(1):
-        input_dir = "{}/{}".format(test_dir, test[i])
+        input_dir = test_dir + test[i]
         output_dir = "{}/{}".format(cut_result_dir, test[i])
         os.mkdir(output_dir)
         cut.cutInputImages(input_dir, output_dir)
@@ -79,8 +80,8 @@ def cut_images(test_dir, cut_result_dir):
     # os.mkdir(output_dir)
     # cut.cutInputImages(input_dir, output_dir)
 
-def main(test_dir, cut_result_dir):
-    cut_images(test_dir, cut_result_dir)
+def main():
+    cut_images()
     for i in range(1):
         image_folder = "{}/{}".format(cut_result_dir, test[i])
         pic_list = os.listdir(image_folder)
@@ -88,21 +89,21 @@ def main(test_dir, cut_result_dir):
             decode_path = "{}/{}".format(image_folder, pic)
             font_num = len(os.listdir(decode_path))
             rslt = decode(font_num, decode_path)
-            cal_accu(rslt, code[i])
+            cal_accu(rslt, code5)
+
+
+
     # one_test
     # output_dir = "../output"
     # decode_path = "{}/{}".format(output_dir, 0)
     # font_num = len(os.listdir(decode_path))
     # rslt = decode(font_num, decode_path)
-    # cal_accu(rslt, "0"*140)            
+    # cal_accu(rslt, "0"*140)
+
+    # 
+            
 
 if __name__ == "__main__":
-    args = parser.add_argument()
-    cut_result_dir = args.cut_result_dir
-    test_dir = args.test_dir
-    if not os.path.exists(cut_result_dir):
-        os.mkdir(cut_result_dir)
-    net = torch.load('../best.pkl')
-    net = net.to(device)
+    net = torch.load('./ResnetModel_21.pkl', map_location='cpu')
     net.eval()
-    main(args, cut_result_dir)
+    main()

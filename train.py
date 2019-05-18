@@ -6,17 +6,22 @@ from torch.utils import data
 import numpy as np
 from PIL import Image 
 from torchvision import transforms, models, datasets
-import sys
+import argparse
 
-EPOCH = 10
-BATCH_SIZE = 8
+parser = argparse.ArgumentParser()
+parser.add_argument("--pretrained", action="store", help="choose whether use prtrained model.", type=bool)
+parser.add_argument("--file", action="store", help="if use pretrained model choose pkl file")
+args = parser.parse_args()
+
+EPOCH = 12 
+BATCH_SIZE = 64
 CLASS_NUM = 2
 NET_WORKERS = 3
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(device)
-normalize = transforms.Normalize(mean=[0.5, 0.5, 0.5],
-                                     std=[0.5, 0.5, 0.5])
+normalize = transforms.Normalize(mean=[0.5,0.5,0.5],
+                                     std=[0.5,0.5,0.5])
 
 transform = transforms.Compose([
     transforms.Resize(224),
@@ -25,7 +30,7 @@ transform = transforms.Compose([
 ])
 
 # get data set
-full_dataset = datasets.ImageFolder(root='../results', transform = transform)
+full_dataset = datasets.ImageFolder(root='./results/together', transform = transform)
 print(full_dataset.class_to_idx)
 
 
@@ -39,13 +44,13 @@ test_loader = data.DataLoader(dataset= test_dataset, batch_size=BATCH_SIZE,shuff
 
 
 # get model
-model = models.resnet18(pretrained = True)
-print(model)
-
-
-resnet_features = model.fc.in_features
-model.fc = nn.Linear(resnet_features, CLASS_NUM)
-model = model.to(device)
+if args.pretrained:
+    model = torch.load(args.file).to(device)
+else:
+    model = models.resnet18(pretrained = True)
+    resnet_features = model.fc.in_features
+    model.fc = nn.Linear(resnet_features, CLASS_NUM)
+    model = model.to(device)
 
 # define optimizer and scheduler
 optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
@@ -77,12 +82,15 @@ def train_model(loader):
                 print('[%d, %5d] loss: %.3f' %
                     (epoch + 1, step + 1, running_loss / 200))
                 running_loss = 0.0
+        
+        if epoch % 4 == 0:
+            PATH = 'Model/ResnetModel_'+str(epoch)+'.pkl'
+            torch.save(model, PATH) 
 
 # use train_dataset to train
 train_model(train_loader)
 
 print('train finished')
-
 # val model
 
 
@@ -116,3 +124,4 @@ print('measure finished')
 # use last test_loader to train
 train_model(test_loader)
 print('all finished')
+torch.save(model, 'Model/ResnetModel_last.pkl')  # save model
