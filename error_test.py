@@ -49,12 +49,11 @@ def decode(word_cnt, decode_path):
     with torch.no_grad():
         for cnt in range(1, word_cnt+1):
             path = decode_path + '/' +str(cnt)+'.png'
-            print(path)
+            # print(path)
             word = trans(Image.open(path))
             word = torch.stack((word, word, word), 0).to(device)
             predict = do_predict(word)
             decode_str += str(np.array(predict)[0])    
-    print(decode_str)
     return decode_str
 
 def cal_accu(decode_str, answer_str):
@@ -72,7 +71,7 @@ def cut_images(test_dir, cut_result_dir):
         input_dir = "{}/{}".format(test_dir, test[i])
         output_dir = "{}/{}".format(cut_result_dir, test[i])
         os.mkdir(output_dir)
-        cut.cutInputImages(input_dir, output_dir)
+        cut.cutInputImages(input_dir, cut_result_dir, test[i])
     # input_dir = "./input"
     # output_dir = "./output"
     # os.system('rm -rf ' + output_dir)
@@ -97,12 +96,17 @@ def main(test_dir, cut_result_dir):
     # cal_accu(rslt, "0"*140)            
 
 if __name__ == "__main__":
-    args = parser.add_argument()
-    cut_result_dir = args.cut_result_dir
-    test_dir = args.test_dir
-    if not os.path.exists(cut_result_dir):
-        os.mkdir(cut_result_dir)
-    net = torch.load('../best.pkl')
-    net = net.to(device)
+    # args = parser.parse_args()
+    # cut_result_dir = args.cut_result_dir
+    # test_dir = args.test_dir
+    # if not os.path.exists(cut_result_dir):
+    #     os.mkdir(cut_result_dir)
+    net = torch.load('../Model/last.pkl', map_location='cpu' )
+    # net = net.to(device)
     net.eval()
-    main(args, cut_result_dir)
+    cut.cutInputImage('../cut_rslt/1.jpg', '../test', '0')
+    # main(args, cut_result_dir)
+    decode_path = "../test/0"
+    font_num = len(os.listdir(decode_path))
+    rslt = decode(font_num, decode_path)
+    print(rslt)

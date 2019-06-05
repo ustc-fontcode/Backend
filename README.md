@@ -1,5 +1,7 @@
 # Chinese Font-Code Backend
 
+{'huawen': 0, 'micro': 1}
+
 ## introduction
 
 a project for creating encoder and decoder based on Chinese font
@@ -24,12 +26,12 @@ visit [localapp](http://localhost:5000/predict) to have a check
 ## wordcut usage
 
 ```python
-from wordcut import wordcut,pretreat
+from wordcut import cutword,pretreat
 
 # example
 font_list = [config.FONT_NAME_Micro, config.FONT_NAME_HuaWen, config.FONT_NAME_Sun, config.FONT_NAME_Fangzheng]
 for font in font_list:
-    wordcut.cut_word_with_size_and_border.count = 0
+    cutword.cut_word_with_size_and_border.count = 0
     path = "data/{}/".format(font)
     files = os.listdir(path)
     for f in files:
@@ -37,17 +39,17 @@ for font in font_list:
         img = Image.open(path + f)
         img = pretreat.crop_image(img)
         # img.show()
-        chars_list = cut_word.cut_word_with_size_and_border(img, font, wordcut.cut_word_with_size_and_border.count)
+        chars_list = cut_word.cut_word_with_size_and_border(img, font, cutoword.cut_word_with_size_and_border.count)
 ```
 
 ## train
 
 ```sh
 # pretrained:
-python train.py --pretrained True --file filename
+python train.py --pretrained  --file filename
 
 # not pretrained:
-python train.py --pretrained Flase
+python train.py --no-pretrained
 ```
 
 ## error_test
@@ -68,3 +70,5 @@ python error_test.py test_dir cut_result_dir
 
 containes two function `cutTrainImages` `cutInputImages`
 
+best.pkl -> 1 huawen 0 micro
+last.pkl -> 0 huawen 1 micro

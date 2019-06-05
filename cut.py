@@ -1,7 +1,8 @@
-from wordcut.wordcut import cut_word_with_size_and_border
-import wordcut
-from wordcut.config import IMAGE_SIZE
-from wordcut.wordcut import binaryzation
+import sys
+sys.path.append("..")
+from cutword import cut_word_with_size_and_border
+from config import IMAGE_SIZE
+from cutword import binaryzation
 from PIL import Image 
 import os
 
@@ -9,20 +10,16 @@ import os
 #   1 -> store input image in input folder
 #   2 -> results are stored in output folder
 
-def cutInputImages(input_path, output_path):
+def cutInputImage(input_img_path, output_path, username):
     
     # clean output dir when start cutting
-    os.system('rm -rf ' + output_path + '/*')
-    input_images = os.listdir(input_path)
-    input_cnt = 0
-
-    for image_name in input_images:
-        img = Image.open("{}/{}".format(input_path,image_name))
-        img = img.resize(IMAGE_SIZE)
-        cut_folder = str(input_cnt)
-        os.makedirs("{}/{}".format(output_path, cut_folder))
-        img_list = cut_word_with_size_and_border(output_path, img, cut_folder, 0)
-        input_cnt += 1
+    if not os.path.exists(output_path):
+        os.mkdir(output_path)
+        os.system('rm -rf ' + output_path + '/*')
+    img = Image.open(input_img_path)
+    img = img.resize(IMAGE_SIZE)
+    img_list = cut_word_with_size_and_border(output_path, img, username, 0)
+    return len(img_list)
 
 
 
@@ -49,10 +46,10 @@ def cutTrainImages(input_path, output_path, fonts_num, fonts_name):
 
 
 if __name__ == "__main__":
-    input_path = "../test"
-    output_path = "../result"
-    if not os.path.exists(output_path):
-            os.mkdir(output_path)
-    os.removedirs("../result")
-    # cutTrainImages(input_path, output_path, 2, ["HuaWenSun", "MicroSun"])
-    cutInputImages(input_path, output_path)
+    input_path = "../output/1.jpg"
+    output_path = "../cut"
+    # if not os.path.exists(output_path):
+    #         os.mkdir(output_path)
+    # # os.removedirs("../result")
+    # cutTrainImages(input_path, output_path, 2, ["huawen", "micro"])
+    cutInputImage(input_path, output_path, '0')
