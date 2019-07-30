@@ -1,10 +1,14 @@
 # encoding:utf-8
-from wordcut import config
+from coder import config
 import numpy as np
 from PIL import Image
+from PIL import ImageOps
 import cv2
 import sys
 import os
+
+from cutword import binaryzation
+
 
 def pretreat(img: Image.Image) -> Image.Image:
     img_data = np.array(img)
@@ -26,8 +30,13 @@ def custom_blur_demo(image: Image.Image, n: int) -> Image.Image:
 
 
 def crop_image(image: Image.Image) -> Image.Image:
-    """Crop document from image.
+    """
+    Crop document from image.
         Takes a PIL.image and return a PIL.image. Not resized.
+
+    :param image:  PIL.Image.Image
+    :return:  注意这里是size为 3000， 1760， 3 的 PIL Image
+
     """
 
     def rectify(h):
@@ -48,15 +57,32 @@ def crop_image(image: Image.Image) -> Image.Image:
     # choose optimal dimensions such that important content is not lost
     image = np.asarray(image)
     # TODO 不知道能不能删掉
-    # image = cv2.resize(image, (1500, 880))
-
+    image = cv2.resize(image, (3000, 1760))
 
     # creating copy of original image
     orig = image.copy()
 
     # convert to grayscale and blur to smooth
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # # 二值化
+    # img_grey = Image.fromarray(gray)
+    # img_grey = ImageOps.invert(img_grey)
+    # img_binary = binaryzation(img_grey, 180)
+    #
+    # # 开操作去噪声
+    # img_binary = img_binary.convert("RGB")
+    # img_binary = cv2.cvtColor(np.array(img_binary), cv2.COLOR_RGB2GRAY)
+    # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 1))
+    # eroded = cv2.erode(img_binary, kernel)
+    # dilated = cv2.dilate(eroded, kernel)
+    # blurred = dilated.copy()
+    # for i in range(dilated.shape[0]):
+    #     for j in range(dilated.shape[1]):
+    #         blurred[i, j] = 255 - dilated[i, j]
+
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    # blurred = cv2.GaussianBlur(dilated, (5, 5), 0)
     # blurred = cv2.medianBlur(gray, 5)
 
     # apply Canny Edge Detection
@@ -84,7 +110,8 @@ def crop_image(image: Image.Image) -> Image.Image:
     # mapping target points to 800x800 quadrilateral
     approx = rectify(target)
     # pts2 = np.float32([[0, 0], [800, 0], [800, 800], [0, 800]])
-    pts2 = np.float32([[0, 0], [config.IMAGE_SIZE[0], 0], [config.IMAGE_SIZE[0], config.IMAGE_SIZE[1]], [0, config.IMAGE_SIZE[1]]])
+    pts2 = np.float32(
+        [[0, 0], [config.IMAGE_SIZE[0], 0], [config.IMAGE_SIZE[0], config.IMAGE_SIZE[1]], [0, config.IMAGE_SIZE[1]]])
 
     M = cv2.getPerspectiveTransform(approx, pts2)
     # dst = cv2.warpPerspective(orig, M, (800, 800))
@@ -131,5 +158,4 @@ if __name__ == "__main__":
         img = Image.open(path + f)
         img = crop_image(img)
         # img.save("data/error-test/" + f)
-        img.save(sys.argv[2]+f)
-
+        img.save(sys.argv[2] + f)

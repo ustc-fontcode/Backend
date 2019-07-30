@@ -1,3 +1,5 @@
+reedsolo
+bchlib
 boto==2.49.0
 boto3==1.9.146
 botocore==1.12.146

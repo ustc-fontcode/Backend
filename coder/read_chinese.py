@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 
 
 def read_chinese3500() -> str:
@@ -11,7 +12,9 @@ def read_chinese3500() -> str:
 
 
 def read_chinese3000() -> str:
-    normal_chars = open('data/frequent_chars/frequent_chars.txt').read()
+    p = Path('.')
+    normal_chars = open(p/'data'/'frequent_chars'/'frequent_chars.txt',
+                        encoding='utf8').read()
     return normal_chars
 
 

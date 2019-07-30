@@ -4,13 +4,14 @@ from PIL import ImageDraw
 import numpy as np
 import cv2
 import argparse
-from coder import read_chinese
-from coder import config
+import read_chinese
+import config
 
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--resolution', action="store", help='generate a specific resolution datasets')
 parser.add_argument('--mode', action="store", help='generate mode: train or error-test')
+
 
 def generate_doc_with_code_and_bias(bits: list,
                                     text: str,
@@ -45,8 +46,8 @@ def generate_doc_with_code_and_bias(bits: list,
                 (config.DOC_IMAGE_SIZE[0] - config.BLANK_SIZE[0],
                  config.DOC_IMAGE_SIZE[1] - config.BLANK_SIZE[1])
             ],
-                           outline=config.BACKGROUND_COLOR,
-                           width=config.BOARDER_SIZE)
+                outline=config.BACKGROUND_COLOR,
+                width=config.BOARDER_SIZE)
             ret.append(img)
         if cursor >= len(bits):
             bit = 0
@@ -106,7 +107,7 @@ def generate_iter(chars: str, font_name: str):
 
 
 def generate_doc_with_random_code(n: int):
-    bits = np.random.randint(2, size=(n, ))
+    bits = np.random.randint(2, size=(n,))
     print(bits)
     text = read_chinese.read_chinese3000()
     for i in range(len(text) // n):
@@ -114,11 +115,11 @@ def generate_doc_with_random_code(n: int):
         # docs = generate_doc_with_code_and_bias(bits,
         #                                        text_epo, ['data/fonts/HuaWenSun.ttf', 'data/fonts/MicroSun.ttf'],
         #                                        bias={1: (0, 0)})
-        
+
         docs = generate_doc_with_code_and_bias(bits,
                                                text_epo, ['data/fonts/HuaWenSun.ttf', 'data/fonts/MicroSun.ttf'],
                                                bias={0: (0, -8)})
-        
+
         for img in docs:
             img = cv2.cvtColor(np.asarray(img), cv2.COLOR_RGB2BGR)
             cv2.imshow("img", img)
@@ -126,15 +127,13 @@ def generate_doc_with_random_code(n: int):
 
 
 if __name__ == "__main__":
-    
-    sep_img = Image.open("data/seperate.jpeg")
+
     # 生成文档，敲回车生成下一页
-    
     chars = read_chinese.read_chinese3000()
     chars = chars * 10
     # generate_doc(chars, config.FONT_NAME_Fangzheng)
     NUM = len(chars)
-    
+
     code = [0 for _ in range(NUM)]
     text = chars[:NUM]
 
@@ -143,26 +142,23 @@ if __name__ == "__main__":
     if args.mode == 'train':
         # 微软仿宋
         doc = generate_doc_with_code_and_bias(code,
-                                            text, ['data/fonts/MicroSun.ttf'],
-                                            bias={0: (0, 0)})
+                                              text, ['data/fonts/MicroSun.ttf'],
+                                              bias={0: (0, 0)})
         for img in doc:
             img = cv2.cvtColor(np.asarray(img), cv2.COLOR_RGB2BGR)
             cv2.imshow("img", img)
             cv2.waitKey()
 
-        sep_img = cv2.cvtColor(np.asarray(sep_img), cv2.COLOR_RGB2BGR)
-        cv2.imshow("sep", sep_img)
         cv2.waitKey()
 
         # 华文仿宋
         doc = generate_doc_with_code_and_bias(code,
-                                            text, ['data/fonts/HuaWenSun.ttf'],
-                                            bias={0: (0, -8)})
+                                              text, ['data/fonts/HuaWenSun.ttf'],
+                                              bias={0: (0, -8)})
         for img in doc:
             img = cv2.cvtColor(np.asarray(img), cv2.COLOR_RGB2BGR)
             cv2.imshow("img", img)
             cv2.waitKey()
-    
-    elif args.mode == 'error':   
+
+    elif args.mode == 'error':
         generate_doc_with_random_code((config.DOC_DIM[0] - 2) * (config.DOC_DIM[1] - 2))
-    
