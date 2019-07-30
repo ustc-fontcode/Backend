@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-
+import os
 
 def read_chinese3500() -> str:
     fonts_range = []
@@ -12,13 +12,14 @@ def read_chinese3500() -> str:
 
 
 def read_chinese3000() -> str:
-    p = Path('.')
-    normal_chars = open(p/'data'/'frequent_chars'/'frequent_chars.txt',
+    p = Path(os.path.split(os.path.realpath(__file__))[0])
+
+    normal_chars = open(str(p/'data'/'frequent_chars'/'frequent_chars.txt'),
                         encoding='utf8').read()
     return normal_chars
 
 
 if __name__ == "__main__":
-    l = read_chinese3500()
+    l = read_chinese3000()
     print(len(l))
     print(type(l))

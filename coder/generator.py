@@ -4,8 +4,9 @@ from PIL import ImageDraw
 import numpy as np
 import cv2
 import argparse
-import read_chinese
-import config
+# import read_chinese
+from .read_chinese import read_chinese3000
+from . import config
 
 parser = argparse.ArgumentParser()
 
@@ -109,7 +110,7 @@ def generate_iter(chars: str, font_name: str):
 def generate_doc_with_random_code(n: int):
     bits = np.random.randint(2, size=(n,))
     print(bits)
-    text = read_chinese.read_chinese3000()
+    text = read_chinese3000()
     for i in range(len(text) // n):
         text_epo = text[i * n: i * n + n]
         # docs = generate_doc_with_code_and_bias(bits,
@@ -129,7 +130,7 @@ def generate_doc_with_random_code(n: int):
 if __name__ == "__main__":
 
     # 生成文档，敲回车生成下一页
-    chars = read_chinese.read_chinese3000()
+    chars = read_chinese3000()
     chars = chars * 10
     # generate_doc(chars, config.FONT_NAME_Fangzheng)
     NUM = len(chars)
